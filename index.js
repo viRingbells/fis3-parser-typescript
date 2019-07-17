@@ -2,6 +2,7 @@
  * fis.baidu.com
  */
 
+var fs = require('fs');
 var ts = require('typescript');
 var util = require('util');
 
@@ -15,7 +16,7 @@ function transpileModule(content, transpileOptions, file) {
   options.isolatedModules = true;
   options.allowNonTsExtensions = true;
   options.noLib = true;
-  options.noResolve = true;
+  // options.noResolve = true;
 
   var newLine = ts.getNewLineCharacter(options);
   var inputFileName = file.isJsXLike ? file.realpath.replace(/\.[^\.]+$/, '.tsx') : file.realpath.replace(/\.jsx$/, '.tsx');
@@ -33,6 +34,7 @@ function transpileModule(content, transpileOptions, file) {
       }
 
       var info = fis.uri(fileName, file.dirname);
+      info.file = info.file || fis.file(info.origin);
 
       if (info.file) {
         var f = info.file;
@@ -60,12 +62,18 @@ function transpileModule(content, transpileOptions, file) {
     getDefaultLibFileName: function () { return "lib.d.ts"; },
     useCaseSensitiveFileNames: function () { return false; },
     getCanonicalFileName: function (fileName) { return fileName; },
-    getCurrentDirectory: function () { return ""; },
+    getCurrentDirectory: function () { return process.cwd(); },
     getNewLine: function () { return newLine; },
     fileExists: function (fileName) {
       return fis.util.exists(fileName);
     },
-    readFile: function (fileName) { return ""; }
+    readFile: function (fileName) { return fis.util.read(fileName); },
+    directoryExists: function (directoryName) {
+      return fis.util.exists(directoryName);
+    },
+    getDirectories: function (directoryName) {
+      return fs.readdirSync(directoryName);
+    },
   };
 
   var program = ts.createProgram([inputFileName], options, compilerHost);
