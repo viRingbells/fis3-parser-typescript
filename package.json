@@ -1,5 +1,5 @@
 {
-  "name": "@viringbells/fis3-parser-typescript",
+  "name": "fis3-parser-typescript-x",
   "description": "A parser plugin for fis3 to compile typescript(ts) file.",
   "version": "1.0.0",
   "author": "Origin by FIS Team <fis@baidu.com>, Modified by Sun Haohao",
