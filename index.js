@@ -14,9 +14,12 @@ function transpileModule(content, transpileOptions, file) {
   var options = transpileOptions.compilerOptions;
 
   options.isolatedModules = true;
-  options.allowNonTsExtensions = true;
   options.noLib = true;
-  // options.noResolve = true;
+
+  /*
+  options.allowNonTsExtensions = true;
+  options.noResolve = true;
+  */
 
   var newLine = ts.getNewLineCharacter(options);
   var inputFileName = file.isJsXLike ? file.realpath.replace(/\.[^\.]+$/, '.tsx') : file.realpath.replace(/\.jsx$/, '.tsx');
@@ -51,11 +54,12 @@ function transpileModule(content, transpileOptions, file) {
     },
     writeFile: function (name, text, writeByteOrderMark) {
       if (ts.fileExtensionIs(name, ".map")) {
-        ts.Debug.assert(sourceMapText === undefined, "Unexpected multiple source map outputs for the file '" + name + "'");
+        // For multi sources, use the last one, which is the target file itself
+        // ts.Debug.assert(sourceMapText === undefined, "Unexpected multiple source map outputs for the file '" + name + "'");
         sourceMapText = text;
       }
       else {
-        ts.Debug.assert(outputText === undefined, "Unexpected multiple outputs for the file: " + name);
+        // ts.Debug.assert(outputText === undefined, "Unexpected multiple outputs for the file: " + name);
         outputText = text;
       }
     },
