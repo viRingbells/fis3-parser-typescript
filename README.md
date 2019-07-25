@@ -47,3 +47,6 @@ fis.set('project.fileType.text', 'ts,tsx');
   * `2`: es6
 * `sourceMap` 默认为 `false` 配置是否输出 sourcemap
 
+
+PS：Fork出来，解决了无法加载@types/xxx的问题，由于没有单元测试，还不能保证对其他功能没有影响
+
