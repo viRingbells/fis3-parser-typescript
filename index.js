@@ -5,16 +5,18 @@
 var fs = require('fs');
 var ts = require('typescript');
 var util = require('util');
+var path = require('path');
 
 var ModuleKind = ts.ModuleKind;
 var JsxEmit = ts.JsxEmit;
 var ScriptTarget = ts.ScriptTarget;
+var TsDir = path.dirname(require.resolve('typescript'));
 
 function transpileModule(content, transpileOptions, file) {
   var options = transpileOptions.compilerOptions;
 
   options.isolatedModules = true;
-  options.noLib = true;
+  options.noLib = false;
 
   /*
   options.allowNonTsExtensions = true;
@@ -32,6 +34,9 @@ function transpileModule(content, transpileOptions, file) {
 
   var compilerHost = {
     getSourceFile: function (fileName) {
+      if (!path.isAbsolute(fileName)) {
+        fileName = path.join(TsDir, fileName);
+      }
       if (fileName === ts.normalizeSlashes(inputFileName)) {
         return sourceFile;
       }
@@ -65,13 +70,26 @@ function transpileModule(content, transpileOptions, file) {
     },
     getDefaultLibFileName: function () { return "lib.d.ts"; },
     useCaseSensitiveFileNames: function () { return false; },
-    getCanonicalFileName: function (fileName) { return fileName; },
+    getCanonicalFileName: function (fileName) {
+      if (!path.isAbsolute(fileName)) {
+        fileName = path.join(TsDir, fileName);
+      }
+      return fileName;
+    },
     getCurrentDirectory: function () { return process.cwd(); },
     getNewLine: function () { return newLine; },
     fileExists: function (fileName) {
+      if (!path.isAbsolute(fileName)) {
+        fileName = path.join(TsDir, fileName);
+      }
       return fis.util.exists(fileName);
     },
-    readFile: function (fileName) { return fis.util.read(fileName); },
+    readFile: function (fileName) {
+      if (!path.isAbsolute(fileName)) {
+        fileName = path.join(TsDir, fileName);
+      }
+      return fis.util.read(fileName);
+    },
     directoryExists: function (directoryName) {
       return fis.util.exists(directoryName);
     },
